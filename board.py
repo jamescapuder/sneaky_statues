@@ -6,11 +6,11 @@
 class Board:
     def __init__(self, moves=None):
         self.board = [[0],[0,0],[0,0,0],[0,0,0,0],[0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0]]
-        self.pieces = [1,2,3,4,5,6,7,8]
-        if not moves:
+        self.pieces = ["1","2","3","4","5","6","7","8"]
+        if moves:
             try:
                 self.moves = moves
-                for k,v in moves:
+                for k,v in moves.items():
                     self.board[v[0]][v[1]] = k
             except IndexError:
                 print("Invalid board positions, edit input and try again")
@@ -38,9 +38,10 @@ class Board:
     def get_possible_moves(self, next_piece):
         if next_piece in self.pieces:
             templocat = self.moves[next_piece]
+            print(templocat)
             possible_boards = []
             for i in range(0,6):
-                for j in range(len(self.board[i])-1):
+                for j in range(len(self.board[i])):
                     if (i, j)!=templocat and self.board[i][j]==0:
                         temp = Board(self.moves)
                         temp.set_position(next_piece, i, j)
@@ -48,3 +49,14 @@ class Board:
             return possible_boards
         else:
             print("Invalid piece number")
+
+
+if __name__=='__main__':
+    moves1 = {"1":(4,2), "2": (5,4), "3": (4,0), "4":(3,1), "5":(4,3), "6":(3,3), "7":(4,1), "8":(5,5)}
+
+
+    b1 = Board(moves1)
+    bs = b1.get_possible_moves("1")
+    for i in bs:
+        for j in i.board:
+            print(j)
