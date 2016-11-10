@@ -40,7 +40,7 @@ class Board:
             templocat = self.moves[next_piece]
             print(templocat)
             possible_boards = []
-            for i in range(0,6):
+            for i in range(0,7):
                 for j in range(len(self.board[i])):
                     if (i, j)!=templocat and self.board[i][j]==0:
                         temp = Board(self.moves)
