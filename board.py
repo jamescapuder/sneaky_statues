@@ -1,7 +1,5 @@
-import copy
 
-"""Main board class. Optionally takes in a dict in the form {piece_number: (x,y)} where x,y are board coordinates."""
-
+#Main board class. Optionally takes in a dict in the form {piece_number: (x,y)} where x,y are board coordinates.
 class Board:
     def __init__(self, moves=None):
         self.board = [[0],[0,0],[0,0,0],[0,0,0,0],[0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0]]
@@ -22,6 +20,9 @@ class Board:
     def get_board(self):
         return self.board
 
+
+    #Method to be used whenever we change anything's position, as we want to keep track of it in
+    #the move dict and on the board itself. Just safer to have this i think.
     def set_position(self,piece, x, y):
         try:
             templocat = self.moves[piece]
@@ -31,6 +32,7 @@ class Board:
         except IndexError:
             print("Attempt to set position out of board bounds.")
 
+    #Gets all possible board states that result from next_piece being the next piece to be moved. Returns list of Boards.
     def get_possible_moves(self, next_piece):
         if next_piece in self.pieces:
             templocat = self.moves[next_piece]
