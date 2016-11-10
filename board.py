@@ -1,5 +1,7 @@
 import copy
 
+"""Main board class. Optionally takes in a dict in the form {piece_number: (x,y)} where x,y are board coordinates."""
+
 class Board:
     def __init__(self, moves=None):
         self.board = [[0],[0,0],[0,0,0],[0,0,0,0],[0,0,0,0,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0]]
