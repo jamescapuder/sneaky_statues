@@ -44,7 +44,7 @@ class Board:
                     if (i, j)!=templocat and self.board[i][j]==0:
                         temp = Board(self.moves)
                         temp.set_position(next_piece, i, j)
-                        possible_boards.append(temp)
+                        possible_boards.append(((i,j),temp))
             return possible_boards
         else:
             print("Invalid piece number")
