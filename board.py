@@ -64,4 +64,4 @@ if __name__=='__main__':
     b1 = Board(moves1)
     bs = b1.get_possible_moves("1")
     for i in bs:
-        print(i)
+        print(i[1])
