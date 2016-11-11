@@ -38,7 +38,6 @@ class Board:
     def get_possible_moves(self, next_piece):
         if next_piece in self.pieces:
             templocat = self.moves[next_piece]
-            print(templocat)
             possible_boards = []
             for i in range(0,7):
                 for j in range(len(self.board[i])):
@@ -50,13 +49,19 @@ class Board:
         else:
             print("Invalid piece number")
 
+    def __str__(self):
+        printstr=""
+        for i in range(0,len(self.board)):
+            row=''
+            for j in self.board[i]:
+                row+=str(j)+" "
+            printstr+='{:^30}'.format(row)
+            printstr+='\n'
+        return printstr
 
 if __name__=='__main__':
     moves1 = {"1":(4,2), "2": (5,4), "3": (4,0), "4":(3,1), "5":(4,3), "6":(3,3), "7":(4,1), "8":(5,5)}
-
-
     b1 = Board(moves1)
     bs = b1.get_possible_moves("1")
     for i in bs:
-        for j in i.board:
-            print(j)
+        print(i)
