@@ -55,7 +55,7 @@ class Board:
             row=''
             for j in self.board[i]:
                 row+=str(j)+" "
-            printstr+='{:^30}'.format(row)
+            printstr+='{:^16}'.format(row)
             printstr+='\n'
         return printstr
 
