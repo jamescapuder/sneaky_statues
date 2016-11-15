@@ -1,9 +1,5 @@
-
-# Main board class. Optionally takes in a dict in the form:
-#  {piece_number: (x,y)} where x,y are board coordinates.
-
-
 class Board:
+
     def __init__(self, moves=None):
         self.board = [[0], [0, 0], [0,0,0], [0,0,0,0], [0,0,0,0,0], [0,0,0,0,0,0], [0,0,0,0,0,0,0]]
         self.pieces = ["1", "2", "3", "4", "5", "6", "7", "8"]
@@ -47,6 +43,7 @@ class Board:
                     if (i, j) != templocat and self.board[i][j] == 0:
                         temp = Board(self.moves)
                         temp.set_position(next_piece, i, j)
+                        print(temp)
                         possible_boards.append(((i, j), temp))
             return possible_boards
         else:
@@ -61,10 +58,3 @@ class Board:
             printstr += '{:^16}'.format(row)
             printstr += '\n'
         return printstr
-
-if __name__=='__main__':
-    moves1 = {"1":(4,2), "2": (5,4), "3": (4,0), "4":(3,1), "5":(4,3), "6":(3,3), "7":(4,1), "8":(5,5)}
-    b1 = Board(moves1)
-    bs = b1.get_possible_moves("1")
-    for i in bs:
-        print(i[1])
