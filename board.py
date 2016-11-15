@@ -8,7 +8,6 @@ class Board:
             try:
                 self.moves = moves
                 for key, val in moves.items():
-                    self.board[val[0]][val[1]] = key
                     if ((val[0],val[1]) != (-1,-1)):
                         self.board[val[0]][val[1]] = key
                     self.turn += 1
