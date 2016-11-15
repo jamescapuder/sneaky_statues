@@ -1,12 +1,16 @@
+import unittest
 import board
 import minimax
 
+class BoardTest(unittest.TestCase):
+    def testBoard(self):
+        root = board.Board()
+        children = root.get_possible_moves("1")
+        print(children)
+        self.assertTrue(len(children) != 27)
+                        
 def main():
-    root = board.Board()
-    test = root.get_possible_moves("1")
-
-    tree = minimax.Tree(root)
-
+    unittest.main()
 
 if __name__ == "__main__":
     main()
