@@ -12,8 +12,8 @@ class Tree:
             next_piece = 8
         return next_piece
 
-    def find_children(self):
-        next_piece = self.get_next_piece()
+    def find_children(self, next_piece):
+#        next_piece = self.get_next_piece()
         boards = self.root.get_possible_moves(next_piece)
         for board in boards:
             temp = Tree(board)
@@ -41,5 +41,11 @@ class Tree:
                     best = val
         return best
 
-    def is_complete(self):
-        pass
+    def __repr__(self,level=0):
+        ret = "\t" * level*2 + repr(self.root) + "\n"
+        if self.children:
+            for child in self.children:
+                ret += child.__repr__(level+1)
+        return ret
+
+    

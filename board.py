@@ -71,3 +71,12 @@ class Board:
             printstr += '{:^16}'.format(row)
             printstr += '\n'
         return printstr
+
+    def __repr__(self):
+        ret = "player one: "
+        for s in self.players["one"]:
+            ret += str(s) + ", "
+        ret += "player two: "
+        for s in self.players["two"]:
+            ret += str(s) + ", "
+        return ret
