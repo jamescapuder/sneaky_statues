@@ -49,13 +49,3 @@ class Board:
             printstr += '{:^16}'.format(row)
             printstr += '\n'
         return printstr
-
-def main():
-    b = Board()
-    pos = b.get_possible_moves(1)
-    for x in pos:
-        print(x[0])
-        print(x[1])
-    
-if __name__ == "__main__":
-    main()
