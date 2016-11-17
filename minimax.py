@@ -1,24 +1,23 @@
 
 class Tree:
-    """
-    tree where each node is a board
-    """
+
     def __init__(self, root):
         self.root = root
-        self.next_piece = self.get_next_piece()
-        self.children = self.find_children()
+        self.height = 1
+        self.children = []
 
     def get_next_piece(self):
-        self.next_piece = self.root.turn % 8
-        if self.next_piece == 0:
-            self.next_piece = "8"
-        else:
-            self.next_piece = str(self.next_piece)
-        return self.next_piece
+        next_piece = self.height % 8
+        if next_piece == 0:
+            next_piece = 8
+        return next_piece
 
     def find_children(self):
-        self.get_next_piece()
-        self.children = self.root.get_possible_moves(self.next_piece)
+        next_piece = self.get_next_piece()
+        boards = self.root.get_possible_moves(next_piece)
+        for board in boards:
+            temp = Tree(board)
+            self.children.append(temp)
         return self.children
 
     def minimax(self):
