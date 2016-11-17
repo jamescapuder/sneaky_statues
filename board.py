@@ -4,17 +4,24 @@ from copy import deepcopy
 
 import piece
 
+
 def is_valid_move(xycord, players):
     if xycord > (6, 6):
         return False
     if xycord[0] > xycord[1]:
         return False
-    for statue in players["one"] + players["two"]:
+    for statue in list(players["one"]) + list(players["two"]):
         if xycord == statue.xy:
             return False
     return True
 
-def is_winner(players):
+
+def is_winner(player):
+    # player_x = [x[1] for x in list(player)]
+    # player_y = [x[0] for x in list(player)]
+    #
+    # if sorted(player_x)==range(min(player_x), max(player_x)+1):
+
     # check horizontal win
     
 
@@ -53,7 +60,7 @@ class Board:
 
     def __str__(self):
         board = [[0], [0, 0], [0,0,0], [0,0,0,0], [0,0,0,0,0], [0,0,0,0,0,0], [0,0,0,0,0,0,0]]
-        pieces_played = self.players["one"] + self.players["two"]
+        pieces_played = list(self.players["one"])+list(self.players["two"])
         for piece in pieces_played:
             board[piece.y][piece.x] = piece.num
         printstr = ""
