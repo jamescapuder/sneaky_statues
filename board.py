@@ -14,6 +14,21 @@ def is_valid_move(xycord, players):
             return False
     return True
 
+def is_winner(players):
+    # check horizontal win
+    
+
+
+    # check forward diagonal
+
+
+    
+    # check backward diagonal 
+
+
+
+    return False
+
 class Board:
 
     def __init__(self, players=None):
@@ -33,7 +48,7 @@ class Board:
                     statue = piece.Piece(statue_num, (x, y))
                     temp = Board(self.players)
                     temp.place_piece(statue)
-                    possible_boards.append(((x, y), temp))
+                    possible_boards.append(temp)
         return possible_boards
 
     def __str__(self):

@@ -4,7 +4,7 @@ class Tree:
     def __init__(self, root):
         self.root = root
         self.height = 1
-        self.children = self.find_children()
+        self.children = []
 
     def get_next_piece(self):
         next_piece = self.height % 8
@@ -14,7 +14,10 @@ class Tree:
 
     def find_children(self):
         next_piece = self.get_next_piece()
-        self.children = self.root.get_possible_moves(next_piece)
+        boards = self.root.get_possible_moves(next_piece)
+        for board in boards:
+            temp = Tree(board)
+            self.children.append(temp)
         return self.children
 
     def minimax(self):
