@@ -4,25 +4,6 @@ from copy import deepcopy
 
 import piece
 
-def is_valid_move(xycord, players):
-    if xycord > (6, 6):
-        return False
-    if xycord[0] > xycord[1]:
-        return False
-    for statue in list(players["one"]) + list(players["two"]):
-        if xycord == statue.xy:
-            return False
-    return True
-
-def is_winner(player):
-    # player_x = [x[1] for x in list(player)]
-    # player_y = [x[0] for x in list(player)]
-    # if sorted(player_x)==range(min(player_x), max(player_x)+1):
-    # check horizontal win
-    # check forward diagonal
-    # check backward diagonal
-    return False
-
 class Board:
     board = [[0], [0, 0], [0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
@@ -75,3 +56,51 @@ class Board:
                 ret += child.__repr__(level + 1)
         return ret
 
+def is_valid_move(xycord, players):
+    if xycord > (6, 6):
+        return False
+    if xycord[0] > xycord[1]:
+        return False
+    for statue in list(players["one"]) + list(players["two"]):
+        if xycord == statue.xy:
+            return False
+    return True
+
+def max_run(pieces):
+    count, max_r = 1, 1
+    for i in range(len(pieces)-1):
+        if pieces[i] + 1 == pieces[i+1]:
+            count += 1
+            if count > max_r:
+                max_r = count
+        else:
+            count = 1
+    return max_r
+
+def is_winner(player):
+    #len(set(iterator)) <= 1
+    player_x = [statue.x for statue in player]
+    player_y = [statue.y for statue in player]
+    player_x.sort()
+    player_y.sort()
+    print("x: ", player_x)
+    print("y: ", player_y)
+    if len(set(player_x)) <= 1:
+        pass
+    if len(set(player_y)) <= 1:
+        print(max_run(player_x))
+    #if len(set(player_y)) <= 1 and player_x == list(range(min(player_x),max(player_x)+1)):
+    # if sorted(player_x)==range(min(player_x), max(player_x)+1):
+    # check horizontal win
+    # check forward diagonal
+    # check backward diagonal
+    return False
+
+# def tree(root, start, max_depth):
+#     if start == max_depth:
+#         return root
+#     else:
+#         node = board.Board()
+#         node.find_children(start)
+#         for child in node.children:
+#             tree(child, start+1, max_depth)
