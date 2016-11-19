@@ -14,6 +14,9 @@ def minimax(root, player, piece, depth=2):
         for move in root.children:
             score = root.scores[player]-root.scores[opponent]
             score += minimax(move, player, piece+1, depth-1)
-            if score > best:
+            if best:
+                if score > best:
+                    best = score
+            else:
                 best = score
         return best
