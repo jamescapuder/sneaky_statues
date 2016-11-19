@@ -15,8 +15,8 @@ class Board:
             self.p2score = None
         else:
             self.players = deepcopy(players)
-            self.p1score = is_winner(self.players["one"])
-            self.p2score = is_winner(self.players["two"])
+            self.p1score = score(self.players["one"])
+            self.p2score = score(self.players["two"])
         self.children = []
 
     def place_piece(self, statue):
@@ -81,24 +81,30 @@ def max_run(pieces):
             count = 1
     return max_r
 
-def is_winner(player):
+def score(player):
     #len(set(iterator)) <= 1
     player_x = [statue.x for statue in player]
     player_y = [statue.y for statue in player]
     player_x.sort()
     player_y.sort()
+    max_score = []
+    max_x = max_run(player_x)
+    max_y = max_run(player_y)
     print("x: ", player_x)
     print("y: ", player_y)
     if len(set(player_x)) <= 1:
-        pass
+        max_score.append(max_y)
     if len(set(player_y)) <= 1:
-        print(max_run(player_x))
+        max_score.append(max_x)
+    if (max_x and max_y) >=3:
+        max_score.append(min([max_x, max_y]))
+    return max(max_score)
     #if len(set(player_y)) <= 1 and player_x == list(range(min(player_x),max(player_x)+1)):
     # if sorted(player_x)==range(min(player_x), max(player_x)+1):
     # check horizontal win
     # check forward diagonal
     # check backward diagonal
-    return False
+    # return False
 
 # def tree(root, start, max_depth):
 #     if start == max_depth:
