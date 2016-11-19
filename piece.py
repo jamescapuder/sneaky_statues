@@ -14,9 +14,4 @@ class Piece:
         self.player, self.opp = get_players(self.num)
 
     def __str__(self):
-        return str(self.num) + " " + str(self.xy)
-    
-    # def __eq__(self, other):
-    #     return self.xy == other.xy
-
-
+        return "[" + str(self.num) + ", " + str(self.xy) + "]"
