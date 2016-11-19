@@ -11,8 +11,12 @@ class Board:
     def __init__(self, players=None):
         if players is None:
             self.players = {"one": deque(maxlen=4), "two": deque(maxlen=4)}
+            self.p1score = None
+            self.p2score = None
         else:
             self.players = deepcopy(players)
+            self.p1score = is_winner(self.players["one"])
+            self.p2score = is_winner(self.players["two"])
         self.children = []
 
     def place_piece(self, statue):
