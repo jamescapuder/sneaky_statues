@@ -21,7 +21,6 @@ class Board:
             self.scores["two"] = score(self.players["two"])
             if self.scores["one"] == 4 or self.scores["two"] == 4:
                 self.leaf = True
-
         self.children = []
 
     def place_piece(self, statue):
