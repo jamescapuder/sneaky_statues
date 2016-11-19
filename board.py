@@ -9,14 +9,18 @@ class Board:
              [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
 
     def __init__(self, players=None):
+        self.leaf = False
+        self.scores = {}
         if players is None:
             self.players = {"one": deque(maxlen=4), "two": deque(maxlen=4)}
-            self.p1score = None
-            self.p2score = None
+            self.scores["one"] = None
+            self.scores["two"] = None
         else:
             self.players = deepcopy(players)
-            self.p1score = score(self.players["one"])
-            self.p2score = score(self.players["two"])
+            self.scores["one"] = score(self.players["one"])
+            self.scores["two"] = score(self.players["two"])
+            if self.scores["one"] == 4 or self.scores["two"] == 4:
+                self.leaf = True
         self.children = []
 
     def place_piece(self, statue):
