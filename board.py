@@ -82,29 +82,36 @@ def max_run(pieces):
     return max_r
 
 def score(player):
-    #len(set(iterator)) <= 1
-    player_x = [statue.x for statue in player]
-    player_y = [statue.y for statue in player]
-    player_x.sort()
-    player_y.sort()
-    max_score = []
-    max_x = max_run(player_x)
-    max_y = max_run(player_y)
-    print("x: ", player_x)
-    print("y: ", player_y)
-    if len(set(player_x)) <= 1:
-        max_score.append(max_y)
-    if len(set(player_y)) <= 1:
-        max_score.append(max_x)
-    if (max_x and max_y) >=3:
-        max_score.append(min([max_x, max_y]))
+    player_x = sorted(player, key=lambda statue: statue.x)
+    player_y = sorted(player, key=lambda statue: statue.y)
+    max_score = [0]
+
+    count = 1
+    for cur_s, next_s in zip(player_x, player_x[1:]):
+        if cur_s.x + 1 == next_s.x and cur_s.y == next_s.y:
+            count += 1
+        else:
+            max_score.append(count)
+            count = 1
+    max_score.append(count)
+    count = 1
+    for cur_s, next_s in zip(player_y, player_y[1:]):
+        if cur_s.y + 1 == next_s.y and cur_s.x == next_s.x:
+            count += 1
+        else:
+            max_score.append(count)
+            count = 1
+    max_score.append(count)
+    count = 1
+    for cur_s, next_s in zip(player_y, player_y[1:]):
+        if cur_s.y + 1 == next_s.y and cur_s.x + 1 == next_s.x:
+            count += 1
+        else:
+            max_score.append(count)
+            count = 1
+    max_score.append(count)
+
     return max(max_score)
-    #if len(set(player_y)) <= 1 and player_x == list(range(min(player_x),max(player_x)+1)):
-    # if sorted(player_x)==range(min(player_x), max(player_x)+1):
-    # check horizontal win
-    # check forward diagonal
-    # check backward diagonal
-    # return False
 
 # def tree(root, start, max_depth):
 #     if start == max_depth:

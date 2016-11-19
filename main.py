@@ -41,6 +41,7 @@ def getsize(obj_0):
 class BoardTest(unittest.TestCase):
     #@unittest.skip("skipping")
     def testMaxRun(self):
+        print("testMaxRun")
         test_1 = [1, 2, 3, 4]
         self.assertEqual(board.max_run(test_1), 4)
         test_2 = [8, 2, 3, 4]
@@ -49,6 +50,13 @@ class BoardTest(unittest.TestCase):
         self.assertEqual(board.max_run(test_3), 2)
         test_4 = [1, 3, 5, 7]
         self.assertEqual(board.max_run(test_4), 1)
+
+    def testScore(self):
+        print("testScore")
+        p1 = deque([piece.Piece(1,(0,2)),piece.Piece(3,(1,2)),piece.Piece(5,(2,2)),piece.Piece(7,(3,3))],maxlen=4)
+        p2 = deque([piece.Piece(2,(0,3)),piece.Piece(4,(1,4)),piece.Piece(6,(2,5)),piece.Piece(8,(3,6))],maxlen=4)
+        self.assertEqual(board.score(p1), 3)
+        self.assertEqual(board.score(p2), 4)
 
 class TreeTest(unittest.TestCase):
     @unittest.skip("skipping")
