@@ -1,7 +1,3 @@
-import board
-from collections import deque
-import piece
-
 
 def minimax(root, player, piece, depth=2):
     opponent = "one"
@@ -14,9 +10,10 @@ def minimax(root, player, piece, depth=2):
         return 4 if max(root.scores, key=root.scores.get) == player else -4
     else:
         best = None
-        for move in root.find_children(piece):
+        root.find_children(piece)
+        for move in root.children:
             score = root.scores[player]-root.scores[opponent]
-            score += minimax(move, player, piece+1,depth-1)
+            score += minimax(move, player, piece+1, depth-1)
             if score > best:
                 best = score
         return best
