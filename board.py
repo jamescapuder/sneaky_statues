@@ -36,7 +36,8 @@ class Board:
                     temp.place_piece(statue)
                     possible_boards.append(temp)
         self.children = possible_boards
-
+        return self.children
+        
     def __str__(self):
         pieces_played = list(self.players["one"])+list(self.players["two"])
         for statue in pieces_played:
