@@ -37,7 +37,24 @@ class Board:
                     possible_boards.append(temp)
         self.children = possible_boards
         return self.children
-        
+
+    #gets score of all boards under this one, with respect to @player
+    def score_children(self, player,depth=1):
+        if not self.children:
+            opponent = "one"
+            if player == "one":
+                opponent = "two"
+            return self.scores[player]# - self.scores[opponent]
+        total = 0
+        if depth == 1:
+            lst = []
+            for child in self.children:
+                lst.append(child.score_children(player, depth + 1))
+            return lst
+        for child in self.children:
+            total += child.score_children(player, depth + 1)
+        return total
+
     def __str__(self):
         pieces_played = list(self.players["one"])+list(self.players["two"])
         for statue in pieces_played:

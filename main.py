@@ -74,7 +74,6 @@ class TreeTest(unittest.TestCase):
         start = time.time()
         x = deque([piece.Piece(1,(1,1)),piece.Piece(3,(2,2)),piece.Piece(5,(5,6)),piece.Piece(7,(1,2))],maxlen=4)
         y = deque([piece.Piece(2,(4,4)),piece.Piece(4,(0,0)),piece.Piece(6,(2,4)),piece.Piece(8,(1,3))],maxlen=4)
-        player_y = sorted(y, key=lambda statue: statue.xy[::-1])
         players = {"one": x, "two": y}
         root = board.Board(players)
         print(root)
@@ -82,10 +81,13 @@ class TreeTest(unittest.TestCase):
         for child in root.children:
             child.find_children(2)
         print(repr(root))
-#        print(getsize(root))
+        for score,bd in zip(root.score_children("one"),root.children):
+            print(score,repr(bd))
         end = time.time()
-#        print(end-start)
         print(root)
+#        print(end-start)
+#        print(getsize(root))
+
         
 def main():
     unittest.main()
