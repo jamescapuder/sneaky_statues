@@ -2,22 +2,20 @@ import board
 from collections import deque
 import piece
 
-
 def minimax(root, player, move, depth=2):
-    print(repr(root))
     opponent = "one"
     if player == "one":
         opponent = "two"
-
-    if depth==0:
+    print("\t"*depth, root.scores[player], root.scores[opponent], repr(root))
+    if depth == 0:
         return root.scores[player] - root.scores[opponent]
     if root.leaf:
         return 4 if max(root.scores, key=root.scores.get) == player else -4
     else:
-        best = None
-        for move in root.find_children(move):
+        best = 0
+        for node in root.find_children(move):
             score = root.scores[player]-root.scores[opponent]
-            score += minimax(move, player, move+1,depth-1)
+            score += minimax(node, player, move+1, depth-1)
             if score > best:
                 best = score
         return best
@@ -28,6 +26,6 @@ def main():
     players = {"one":p1, "two":p2}
     b = board.Board(players)
     print(minimax(b,"one",1))
-    
+
 if __name__ == "__main__":
     main()

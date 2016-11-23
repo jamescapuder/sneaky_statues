@@ -53,10 +53,12 @@ class Board:
 
     def __repr__(self, level=0):
         ret = "\t" * (level)
-        ret += "player one: "
+        ret += str(self.scores["one"]) 
+        ret += " player one: "
         for statue in self.players["one"]:
             ret += str(statue) + ", "
-        ret += "player two: "
+        ret += str(self.scores["two"])
+        ret += " player two: "
         for statue in self.players["two"]:
             ret += str(statue) + ", "
         ret += "\n"
@@ -87,10 +89,9 @@ def max_run(pieces):
     return max_r
 
 def score(player):
-    player_x = sorted(player, key=lambda statue: statue.x)
-    player_y = sorted(player, key=lambda statue: statue.y)
+    player_x = sorted(player, key=lambda statue: statue.xy)
+    player_y = sorted(player, key=lambda statue: statue.xy[::-1])
     max_score = [0]
-
     count = 1
     for cur_s, next_s in zip(player_x, player_x[1:]):
         if cur_s.x + 1 == next_s.x and cur_s.y == next_s.y:
