@@ -3,22 +3,6 @@ from copy import deepcopy
 
 import piece
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-
-    def disable(self):
-        self.HEADER = ''
-        self.OKBLUE = ''
-        self.OKGREEN = ''
-        self.WARNING = ''
-        self.FAIL = ''
-        self.ENDC = ''
-
 class Board:
 
     def __init__(self, players=None):
@@ -42,7 +26,6 @@ class Board:
         self.scores["two"] = score(self.players["two"])
         if self.scores["one"] == 4 or self.scores["two"] == 4:
             self.leaf = True
-            
 
     def find_children(self, statue_num, depth):
         possible_boards = []
@@ -53,7 +36,7 @@ class Board:
                     temp = Board(self.players)
                     temp.place_piece(statue)
                     possible_boards.append(temp)
-                    if depth > 1:
+                    if depth > 1 and not temp.leaf:
                         temp.find_children(next_move(statue_num), depth - 1)
         self.children = possible_boards
         return self.children
@@ -63,20 +46,22 @@ class Board:
         opponent = "one"
         if player == "one":
             opponent = "two"
-        if not self.children:
-            return self.scores[player] - self.scores[opponent]
-        total = 0
         if depth == 1:
             lst = []
             for child in self.children:
+                for next_gen in child.children:
+                    if next_gen.scores[opponent] == 4:
+                        continue
                 lst.append(child.score_children(player, depth + 1) + (self.scores[player] \
                                                                       - self.scores[opponent]))
             return lst
-        for child in self.children:
-            if child.scores[opponent] > child.scores[player]:
-                total -= 10
-            total += child.score_children(player, depth + 1)
-        return total
+        if not self.children:
+            return self.scores[player] - self.scores[opponent]
+        else:
+            total = 0
+            for child in self.children:
+                total += child.score_children(player, depth + 1)
+            return total
 
     def __str__(self):
         board = [["(0,0)"], ["(0,1)", "(1,1)"], ["(0,2)", "(1,2)", "(2,2)"],
@@ -85,11 +70,11 @@ class Board:
                  ["(0,5)", "(1,5)", "(2,5)", "(3,5)", "(4,5)", "(5,5)"],
                  ["(0,6)", "(1,6)", "(2,6)", "(3,6)", "(4,6)", "(5,6)", "(6,6)"]]
         for statue in list(self.players["one"]):
-            board[statue.y][statue.x] = bcolors.OKBLUE + "(x," + \
-                                        str(statue.num) + ")" + bcolors.ENDC
+            board[statue.y][statue.x] = "(X," + \
+                                        str(statue.num) + ")"
         for statue in list(self.players["two"]):
-            board[statue.y][statue.x] = bcolors.OKGREEN + "(x," + \
-                                        str(statue.num) + ")" + bcolors.ENDC
+            board[statue.y][statue.x] = "(Y," + \
+                                        str(statue.num) + ")"
         printstr = ""
         for i in range(0, len(board)):
             row = ''

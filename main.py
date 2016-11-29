@@ -73,14 +73,13 @@ class TreeTest(unittest.TestCase):
         print()
 
         
-        x = deque([piece.Piece(1,(1,1)),piece.Piece(3,(2,2)),piece.Piece(5,(5,6)),piece.Piece(7,(1,2))],maxlen=4)
-        y = deque([piece.Piece(2,(4,4)),piece.Piece(4,(0,0)),piece.Piece(6,(2,4)),piece.Piece(8,(1,3))],maxlen=4)
+        x = deque([piece.Piece(1,(0,0)),piece.Piece(3,(2,2)),piece.Piece(5,(1,1)),piece.Piece(7,(4,4))],maxlen=4)
+        y = deque([piece.Piece(2,(0,6)),piece.Piece(4,(0,4)),piece.Piece(6,(2,4)),piece.Piece(8,(3,4))],maxlen=4)
         players = {"one": x, "two": y}
 
-        root = board.Board()
-        
-        print(root)
-        print(minimax.minimax(root,1))
+        root = board.Board(players)
+        root.find_children(1,2)
+        print(repr(root))
         end = time.time()
 #        print(end-start)
 #        print(getsize(root))
