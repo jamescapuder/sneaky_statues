@@ -1,4 +1,3 @@
-
 from collections import deque
 from copy import deepcopy
 
@@ -27,6 +26,7 @@ class Board:
         self.scores["two"] = score(self.players["two"])
         if self.scores["one"] == 4 or self.scores["two"] == 4:
             self.leaf = True
+            
 
     def find_children(self, statue_num, depth):
         possible_boards = []
@@ -61,17 +61,17 @@ class Board:
         return total
 
     def __str__(self):
-        board = [[0], [0, 0], [0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0],
-                 [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
+        board = [[(0,0)], [(0,1), (1,1)], [(0,2), (1,2), (2,2)], [(0,3), (1,3), (2,3), (3,3)], [(0,4), (1,4), (2,4), (3,4), (4,4)],
+                 [(0,5), (1,5), (2,5), (3,5), (4,5), (5,5)], [(0,6), (1,6), (2,6), (3,6), (4,6), (5,6), (6,6)]]
         pieces_played = list(self.players["one"])+list(self.players["two"])
         for statue in pieces_played:
-            board[statue.y][statue.x] = statue.num
+            board[statue.y][statue.x] = "(x, "+ str(statue.num) + ")"
         printstr = ""
         for i in range(0, len(board)):
             row = ''
             for j in board[i]:
-                row += str(j)+" "
-            printstr += '{:^16}'.format(row)
+                row += str(j)+""
+            printstr += '{:^80}'.format(row)
             printstr += '\n'
         return printstr
 
