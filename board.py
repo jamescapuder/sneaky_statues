@@ -51,8 +51,10 @@ class Board:
             for child in self.children:
                 for next_gen in child.children:
                     if next_gen.scores[opponent] == 4:
-                        continue
-                lst.append(child.score_children(player, depth + 1) + (self.scores[player] \
+                        lst.append(-1000000) # try not to lose ok
+                        break
+                else:
+                    lst.append(child.score_children(player, depth + 1) + (self.scores[player] \
                                                                       - self.scores[opponent]))
             return lst
         if not self.children:
