@@ -18,11 +18,15 @@ class Board:
             self.players = deepcopy(players)
             self.scores["one"] = score(self.players["one"])
             self.scores["two"] = score(self.players["two"])
+            if self.scores["one"] == 4 or self.scores["two"] == 4:
+                self.leaf = True
 
     def place_piece(self, statue):
         self.players[statue.player].append(statue)
         self.scores["one"] = score(self.players["one"])
         self.scores["two"] = score(self.players["two"])
+        if self.scores["one"] == 4 or self.scores["two"] == 4:
+            self.leaf = True
 
     def find_children(self, statue_num, depth):
         possible_boards = []
@@ -90,7 +94,7 @@ class Board:
 def next_move(current):
     n_move = (current + 1) % 8
     if n_move == 0:
-        n_move = 1
+        n_move = 8
     return n_move
 
 def is_valid_move(xycord, players):
@@ -144,6 +148,60 @@ def score(player):
     max_score.append(count)
 
     return max(max_score)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
