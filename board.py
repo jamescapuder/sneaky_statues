@@ -3,6 +3,22 @@ from copy import deepcopy
 
 import piece
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+
+    def disable(self):
+        self.HEADER = ''
+        self.OKBLUE = ''
+        self.OKGREEN = ''
+        self.WARNING = ''
+        self.FAIL = ''
+        self.ENDC = ''
+
 class Board:
 
     def __init__(self, players=None):
@@ -61,11 +77,17 @@ class Board:
         return total
 
     def __str__(self):
-        board = [[(0,0)], [(0,1), (1,1)], [(0,2), (1,2), (2,2)], [(0,3), (1,3), (2,3), (3,3)], [(0,4), (1,4), (2,4), (3,4), (4,4)],
-                 [(0,5), (1,5), (2,5), (3,5), (4,5), (5,5)], [(0,6), (1,6), (2,6), (3,6), (4,6), (5,6), (6,6)]]
-        pieces_played = list(self.players["one"])+list(self.players["two"])
-        for statue in pieces_played:
-            board[statue.y][statue.x] = "(x, "+ str(statue.num) + ")"
+        board = [["(0,0)"], ["(0,1)", "(1,1)"], ["(0,2)", "(1,2)", "(2,2)"],
+                 ["(0,3)", "(1,3)", "(2,3)", "(3,3)"],
+                 ["(0,4)", "(1,4)", "(2,4)", "(3,4)", "(4,4)"],
+                 ["(0,5)", "(1,5)", "(2,5)", "(3,5)", "(4,5)", "(5,5)"],
+                 ["(0,6)", "(1,6)", "(2,6)", "(3,6)", "(4,6)", "(5,6)", "(6,6)"]]
+        for statue in list(self.players["one"]):
+            board[statue.y][statue.x] = bcolors.OKBLUE + "(x," + \
+                                        str(statue.num) + ")" + bcolors.ENDC
+        for statue in list(self.players["two"]):
+            board[statue.y][statue.x] = bcolors.OKGREEN + "(x," + \
+                                        str(statue.num) + ")" + bcolors.ENDC
         printstr = ""
         for i in range(0, len(board)):
             row = ''
