@@ -73,6 +73,8 @@ class Board:
                                                                       - self.scores[opponent]))
             return lst
         for child in self.children:
+            if child.scores[opponent] > child.scores[player]:
+                total -= 10
             total += child.score_children(player, depth + 1)
         return total
 
