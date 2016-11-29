@@ -39,7 +39,7 @@ def getsize(obj_0):
     return inner(obj_0)
 
 class BoardTest(unittest.TestCase):
-
+    @unittest.skip("skipping")
     def testMaxRun(self):
         print("testMaxRun")
         test_1 = [1, 2, 3, 4]
@@ -51,6 +51,7 @@ class BoardTest(unittest.TestCase):
         test_4 = [1, 3, 5, 7]
         self.assertEqual(board.max_run(test_4), 1)
 
+    @unittest.skip("skipping")
     def testScore(self):
         print("testScore")
         p1 = deque([piece.Piece(1,(0,2)),piece.Piece(3,(1,2)),piece.Piece(5,(2,2)),piece.Piece(7,(3,3))],maxlen=4)
@@ -67,25 +68,77 @@ class BoardTest(unittest.TestCase):
         self.assertEqual(board.score(p2), 1)
 
 class TreeTest(unittest.TestCase):
-    @unittest.skip("skipping")
+    #@unittest.skip("skipping")
     def testTree(self):
         print()
-        start = time.time()
+
+        
         x = deque([piece.Piece(1,(1,1)),piece.Piece(3,(2,2)),piece.Piece(5,(5,6)),piece.Piece(7,(1,2))],maxlen=4)
         y = deque([piece.Piece(2,(4,4)),piece.Piece(4,(0,0)),piece.Piece(6,(2,4)),piece.Piece(8,(1,3))],maxlen=4)
         players = {"one": x, "two": y}
-        root = board.Board(players)
-        root.find_children(1)
-        for child in root.children:
-            child.find_children(2)
-        print(repr(root))
-        print(getsize(root))
-        end = time.time()
-        print(end-start)
+
+        root = board.Board()
+        
         print(root)
+        print(minimax.minimax(root,1))
+        end = time.time()
+#        print(end-start)
+#        print(getsize(root))
+
         
 def main():
     unittest.main()
 
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

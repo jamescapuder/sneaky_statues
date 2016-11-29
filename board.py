@@ -5,28 +5,30 @@ from copy import deepcopy
 import piece
 
 class Board:
-    board = [[0], [0, 0], [0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0],
-             [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
 
     def __init__(self, players=None):
         self.leaf = False
         self.scores = {}
+        self.children = []
         if players is None:
             self.players = {"one": deque(maxlen=4), "two": deque(maxlen=4)}
-            self.scores["one"] = None
-            self.scores["two"] = None
+            self.scores["one"] = 0
+            self.scores["two"] = 0
         else:
             self.players = deepcopy(players)
             self.scores["one"] = score(self.players["one"])
             self.scores["two"] = score(self.players["two"])
             if self.scores["one"] == 4 or self.scores["two"] == 4:
                 self.leaf = True
-        self.children = []
 
     def place_piece(self, statue):
         self.players[statue.player].append(statue)
+        self.scores["one"] = score(self.players["one"])
+        self.scores["two"] = score(self.players["two"])
+        if self.scores["one"] == 4 or self.scores["two"] == 4:
+            self.leaf = True
 
-    def find_children(self, statue_num):
+    def find_children(self, statue_num, depth):
         possible_boards = []
         for y in range(7):
             for x in range(y+1):
@@ -35,16 +37,39 @@ class Board:
                     temp = Board(self.players)
                     temp.place_piece(statue)
                     possible_boards.append(temp)
+                    if depth > 1:
+                        temp.find_children(next_move(statue_num), depth - 1)
         self.children = possible_boards
+        return self.children
+
+    #gets score of all boards under this one, with respect to @player
+    def score_children(self, player, depth=1):
+        opponent = "one"
+        if player == "one":
+            opponent = "two"
+        if not self.children:
+            return self.scores[player] - self.scores[opponent]
+        total = 0
+        if depth == 1:
+            lst = []
+            for child in self.children:
+                lst.append(child.score_children(player, depth + 1) + (self.scores[player] \
+                                                                      - self.scores[opponent]))
+            return lst
+        for child in self.children:
+            total += child.score_children(player, depth + 1)
+        return total
 
     def __str__(self):
+        board = [[0], [0, 0], [0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]]
         pieces_played = list(self.players["one"])+list(self.players["two"])
         for statue in pieces_played:
-            Board.board[statue.y][statue.x] = statue.num
+            board[statue.y][statue.x] = statue.num
         printstr = ""
-        for i in range(0, len(Board.board)):
+        for i in range(0, len(board)):
             row = ''
-            for j in Board.board[i]:
+            for j in board[i]:
                 row += str(j)+" "
             printstr += '{:^16}'.format(row)
             printstr += '\n'
@@ -52,10 +77,12 @@ class Board:
 
     def __repr__(self, level=0):
         ret = "\t" * (level)
-        ret += "player one: "
+        ret += str(self.scores["one"])
+        ret += " player one: "
         for statue in self.players["one"]:
             ret += str(statue) + ", "
-        ret += "player two: "
+        ret += str(self.scores["two"])
+        ret += " player two: "
         for statue in self.players["two"]:
             ret += str(statue) + ", "
         ret += "\n"
@@ -63,6 +90,12 @@ class Board:
             for child in self.children:
                 ret += child.__repr__(level + 1)
         return ret
+
+def next_move(current):
+    n_move = (current + 1) % 8
+    if n_move == 0:
+        n_move = 8
+    return n_move
 
 def is_valid_move(xycord, players):
     if xycord > (6, 6):
@@ -86,10 +119,9 @@ def max_run(pieces):
     return max_r
 
 def score(player):
-    player_x = sorted(player, key=lambda statue: statue.x)
-    player_y = sorted(player, key=lambda statue: statue.y)
+    player_x = sorted(player, key=lambda statue: statue.xy)
+    player_y = sorted(player, key=lambda statue: statue.xy[::-1])
     max_score = [0]
-
     count = 1
     for cur_s, next_s in zip(player_x, player_x[1:]):
         if cur_s.x + 1 == next_s.x and cur_s.y == next_s.y:
@@ -117,11 +149,61 @@ def score(player):
 
     return max(max_score)
 
-# def tree(root, start, max_depth):
-#     if start == max_depth:
-#         return root
-#     else:
-#         node = board.Board()
-#         node.find_children(start)
-#         for child in node.children:
-#             tree(child, start+1, max_depth)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
