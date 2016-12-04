@@ -6,7 +6,7 @@ from numbers import Number
 from collections import Set, Mapping, deque
 
 import board
-import minimax
+import network
 import piece
 
 try: # Python 2
@@ -72,72 +72,22 @@ class TreeTest(unittest.TestCase):
     def testTree(self):
         print()
 
-        
         x = deque([piece.Piece(1,(0,0)),piece.Piece(3,(2,2)),piece.Piece(5,(1,1)),piece.Piece(7,(4,4))],maxlen=4)
         y = deque([piece.Piece(2,(0,6)),piece.Piece(4,(0,4)),piece.Piece(6,(2,4)),piece.Piece(8,(3,4))],maxlen=4)
         players = {"one": x, "two": y}
 
         root = board.Board(players)
-        root.find_children(1,2)
-        print(repr(root))
+        root.find_children(1,3)
+        boards = network.filter_children(root, 1)
+        
+        for child in boards:
+            print(child.score_one,child.score_two)
         end = time.time()
 #        print(end-start)
 #        print(getsize(root))
 
-        
 def main():
     unittest.main()
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

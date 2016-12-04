@@ -1,4 +1,4 @@
-from collections import deque
+from collections import deque, Counter 
 from copy import deepcopy
 
 import piece
@@ -7,24 +7,23 @@ class Board:
 
     def __init__(self, players=None):
         self.leaf = False
-        self.scores = {}
         self.children = []
         if players is None:
             self.players = {"one": deque(maxlen=4), "two": deque(maxlen=4)}
-            self.scores["one"] = 0
-            self.scores["two"] = 0
+            self.score_one = 0
+            self.score_two = 0
         else:
             self.players = deepcopy(players)
-            self.scores["one"] = score(self.players["one"])
-            self.scores["two"] = score(self.players["two"])
-            if self.scores["one"] == 4 or self.scores["two"] == 4:
+            self.score_one = score(self.players["one"])
+            self.score_two = score(self.players["two"])
+            if self.score_one == 4 or self.score_two == 4:
                 self.leaf = True
 
     def place_piece(self, statue):
         self.players[statue.player].append(statue)
-        self.scores["one"] = score(self.players["one"])
-        self.scores["two"] = score(self.players["two"])
-        if self.scores["one"] == 4 or self.scores["two"] == 4:
+        self.score_one = score(self.players["one"])
+        self.score_two = score(self.players["two"])
+        if self.score_one == 4 or self.score_two == 4:
             self.leaf = True
 
     def find_children(self, statue_num, depth):
@@ -38,32 +37,11 @@ class Board:
                     possible_boards.append(temp)
                     if depth > 1 and not temp.leaf:
                         temp.find_children(next_move(statue_num), depth - 1)
+                        for child in temp.children:
+                            temp.score_one += child.score_one
+                            temp.score_two += child.score_two
         self.children = possible_boards
         return self.children
-
-    #gets score of all boards under this one, with respect to @player
-    def score_children(self, player, depth=1):
-        opponent = "one"
-        if player == "one":
-            opponent = "two"
-        if depth == 1:
-            lst = []
-            for child in self.children:
-                for next_gen in child.children:
-                    if next_gen.scores[opponent] == 4:
-                        lst.append(-1000000) # try not to lose ok
-                        break
-                else:
-                    lst.append(child.score_children(player, depth + 1) + (self.scores[player] \
-                                                                      - self.scores[opponent]))
-            return lst
-        if not self.children:
-            return self.scores[player] - self.scores[opponent]
-        else:
-            total = 0
-            for child in self.children:
-                total += child.score_children(player, depth + 1)
-            return total
 
     def __str__(self):
         board = [["(0,0)"], ["(0,1)", "(1,1)"], ["(0,2)", "(1,2)", "(2,2)"],
@@ -88,11 +66,11 @@ class Board:
 
     def __repr__(self, level=0):
         ret = "\t" * (level)
-        ret += str(self.scores["one"])
+        ret += str(self.score_one)
         ret += " player one: "
         for statue in self.players["one"]:
             ret += str(statue) + ", "
-        ret += str(self.scores["two"])
+        ret += str(self.score_two)
         ret += " player two: "
         for statue in self.players["two"]:
             ret += str(statue) + ", "
@@ -159,62 +137,3 @@ def score(player):
     max_score.append(count)
 
     return max(max_score)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

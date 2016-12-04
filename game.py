@@ -1,9 +1,9 @@
 
-import random
 import sys
 
 import piece
 import board
+import network
 
 def player_turn(turn, brd):
     print("Turn: ", turn, "\n")
@@ -16,12 +16,13 @@ def player_turn(turn, brd):
 
 def computer_turn(turn, brd, comp):
     brd.find_children(turn, 3)
-    scores = brd.score_children(comp)
-    max_value = max(scores)
-    indices = [i for i, v in enumerate(scores) if v == max_value]
-    index = random.choice(indices)
-    brd = brd.children[index]
-    return brd
+    best_score = float("-inf")
+    best_board = None
+    for child in brd.children:
+        if child.score_two - child.score_one > best_score:
+            best_score = child.score_two - child.score_one
+            best_board = child
+    return best_board
 
 def run_game():
     player = "one"
@@ -34,10 +35,10 @@ def run_game():
             brd = player_turn(turn, brd)
         else:
             brd = computer_turn(turn, brd, comp)
-        if brd.scores["one"] == 4:
+        if brd.score_one == 4:
             print("Player one wins! ")
             sys.exit(1)
-        if brd.scores["two"] == 4:
+        if brd.score_two == 4:
             print("Player two wins! ")
             sys.exit(1)
 
