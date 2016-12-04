@@ -42,20 +42,23 @@ def crossover(parent_1, parent_2):
     child_2 = np.concatenate([parent_2[:cross_point], parent_1[cross_point:]])
     return child_1.reshape(shape), child_2.reshape(shape)
 
+def save_network(**matrices):
+    np.savez('net.npz', **matrices)
+
+def load_network(fname):
+    data = np.load(fname)
+    layer1 = Layer(data['weights1'], data['bias1'], sigmoid)
+    layer2 = Layer(data['weights2'], data['bias2'], sigmoid)
+    layer3 = Layer(data['weights3'], data['bias3'], hardlim)
+    return layer1, layer2, layer3
+
 def main():
-    weights1 = np.random.uniform(-1, 1, (3, 3))
-    weights2 = np.random.uniform(-1, 1, (3, 3))
-    weights3 = np.random.uniform(-1, 1, (1, 3))
-    bias1 = np.zeros((3, 1))
-    bias2 = np.zeros((3, 1))
-    bias3 = np.zeros((3, 1))
-    inputs = np.random.uniform(-1, 1, (3, 1))    
-    layer1 = Layer(weights1, bias1, sigmoid)
-    layer2 = Layer(weights2, bias2, sigmoid)
-    output_layer = Layer(weights3, bias3, hardlim)
+    # save_network(weights1=weights1,weights2=weights2,weights3=weights3,bias1=bias1,bias2=bias2,bias3=bias3)
+    inputs = np.random.uniform(-1, 1, (3, 1))
+    layer1, layer2, layer3 = load_network('net.npz')
     out1 = layer1.output(inputs)
     out2 = layer2.output(out1)
-    final = output_layer.output(out2)
+    final = layer3.output(out2)
     print(final)
 
 if __name__ == "__main__":
