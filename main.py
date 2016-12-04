@@ -6,7 +6,7 @@ from numbers import Number
 from collections import Set, Mapping, deque
 
 import board
-import minimax
+import network
 import piece
 
 try: # Python 2
@@ -78,14 +78,14 @@ class TreeTest(unittest.TestCase):
 
         root = board.Board(players)
         root.find_children(1,3)
-
-        for child in root.children:
+        boards = network.filter_children(root, 1)
+        
+        for child in boards:
             print(child.score_one,child.score_two)
         end = time.time()
 #        print(end-start)
 #        print(getsize(root))
 
-        
 def main():
     unittest.main()
 
