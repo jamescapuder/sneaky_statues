@@ -1,11 +1,17 @@
-from collections import deque, Counter 
+from collections import deque
 from copy import deepcopy
+import numpy as np
+import sys
 
 import piece
+import network
+
+LAYER_1, LAYER_2, LAYER_3 = network.load_network('net.npz')
 
 class Board:
 
     def __init__(self, players=None):
+        self.rating = -1
         self.leaf = False
         self.children = []
         if players is None:
@@ -40,6 +46,18 @@ class Board:
                         for child in temp.children:
                             temp.score_one += child.score_one
                             temp.score_two += child.score_two
+        self.children = possible_boards
+        return self.children
+
+    def focused_find_children(self, statue_num, depth):
+        possible_boards = self.find_children(statue_num, 1)
+        pruned = test_children(possible_boards, statue_num)
+        for child in pruned:
+            if depth > 1 and not child.leaf:
+                child.focused_find_children(next_move(statue_num), depth - 1)
+                for next_child in child.children:
+                    child.score_one += next_child.score_one
+                    child.score_two += next_child.score_two
         self.children = possible_boards
         return self.children
 
@@ -79,6 +97,27 @@ class Board:
             for child in self.children:
                 ret += child.__repr__(level + 1)
         return ret
+
+def test_children(boards, cur_piece):
+    for brd in boards:
+        brd.rating = test_child(brd, cur_piece)
+    boards.sort(key=lambda x: x.rating)
+    return boards[int(len(boards)*.70):]
+
+def test_child(child, cur_piece):
+    inputs = np.zeros((17, 1))
+    index = 0
+    pieces = list(child.players['one']) + list(child.players['two'])
+    pieces.sort(key=lambda x: x.num)
+    for piece in pieces:
+        inputs[index] = piece.x
+        inputs[index+1] = piece.y
+        index += 2
+    inputs[16] = cur_piece
+    inputs = network.normalize(inputs)
+    inputs[16] = (inputs[16] * 6) / 8
+    out = LAYER_3.feed(LAYER_2.feed(LAYER_1.feed(inputs)))
+    return out[0]
 
 def next_move(current):
     n_move = (current + 1) % 8
@@ -137,3 +176,14 @@ def score(player):
     max_score.append(count)
 
     return max(max_score)
+
+
+
+
+
+
+
+
+
+
+

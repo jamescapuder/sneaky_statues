@@ -49,26 +49,28 @@ def load_network(fname):
     data = np.load(fname)
     layer1 = Layer(data['weights1'], data['bias1'], sigmoid)
     layer2 = Layer(data['weights2'], data['bias2'], sigmoid)
-    layer3 = Layer(data['weights3'], data['bias3'], hardlim)
+    layer3 = Layer(data['weights3'], data['bias3'], sigmoid)
     return layer1, layer2, layer3
 
-def filter_children(root, cur_piece):
-    layer1, layer2, layer3 = load_network('net.npz')
-    boards = []
-    for child in root.children:
-        inputs = np.zeros((17, 1))
-        index = 0
-        for piece in child.players['one'] + child.players['two']:
-            inputs[index] = piece.x
-            inputs[index+1] = piece.y
-            index += 2
-        inputs[16] = cur_piece
-        print(inputs.transpose())
-        inputs = normalize(inputs)
-        out = layer3.feed(layer2.feed(layer1.feed(inputs)))
-        if out[0] == 1:
-            boards.append(child)
-    return boards
+# def filter_children(root, cur_piece):
+#     layer1, layer2, layer3 = load_network('net.npz')
+#     boards = []
+#     for child in root.children:
+#         inputs = np.zeros((17, 1))
+#         index = 0
+#         pieces = list(child.players['one']) + list(child.players['two'])
+#         pieces.sort(key=lambda x: x.num)
+#         for piece in pieces:
+#             inputs[index] = piece.x
+#             inputs[index+1] = piece.y
+#             index += 2
+#         inputs[16] = cur_piece
+#         inputs = normalize(inputs)
+#         inputs[16] = (inputs[16] * 6) / 8
+#         out = layer3.feed(layer2.feed(layer1.feed(inputs)))
+#         if out[0] == 1:
+#             boards.append(child)
+#     return boards
 
 def main():
     weights1 = np.random.uniform(-.5, .5, (17, 17))
@@ -77,14 +79,14 @@ def main():
     bias1 = np.random.uniform(0, 0, (17, 1))
     bias2 = np.random.uniform(0, 0, (17, 1))
     bias3 = np.random.uniform(0, 0, (17, 1))
-    save_network(weights1=weights1,weights2=weights2,weights3=weights3,bias1=bias1,bias2=bias2,bias3=bias3)
+    save_network(weights1=weights1, weights2=weights2, weights3=weights3,
+                 bias1=bias1, bias2=bias2, bias3=bias3)
     # inputs = np.random.uniform(-1, 1, (3, 1))
     # layer1, layer2, layer3 = load_network('net.npz')
     # out1 = layer1.output(inputs)
     # out2 = layer2.output(out1)
     # final = layer3.output(out2)
     # print(final)
-    pass
 
 if __name__ == "__main__":
     main()
