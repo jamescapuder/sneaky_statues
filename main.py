@@ -66,7 +66,6 @@ class BoardTest(unittest.TestCase):
         p2 = deque([piece.Piece(2,(0,6)),piece.Piece(4,(1,5)),piece.Piece(6,(2,4)),piece.Piece(8,(3,3))],maxlen=4)
         self.assertEqual(board.score(p1), 2)
         self.assertEqual(board.score(p2), 1)
-
 class TreeTest(unittest.TestCase):
     #@unittest.skip("skipping")
     def testTree(self):
@@ -79,7 +78,6 @@ class TreeTest(unittest.TestCase):
         root = board.Board(players)
         root.find_children(1,3)
         boards = network.filter_children(root, 1)
-        
         for child in boards:
             print(child.score_one,child.score_two)
         end = time.time()

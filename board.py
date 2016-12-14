@@ -1,12 +1,10 @@
 from collections import deque
 from copy import deepcopy
 import numpy as np
-import sys
 
 import piece
 import network
 
-LAYER_1, LAYER_2, LAYER_3 = network.load_network('net.npz')
 
 class Board:
 
@@ -49,9 +47,9 @@ class Board:
         self.children = possible_boards
         return self.children
 
-    def focused_find_children(self, statue_num, depth):
+    def focused_find_children(self, statue_num, depth, net):
         possible_boards = self.find_children(statue_num, 1)
-        pruned = test_children(possible_boards, statue_num)
+        pruned = test_children(possible_boards, statue_num, net)
         for child in pruned:
             if depth > 1 and not child.leaf:
                 child.focused_find_children(next_move(statue_num), depth - 1)
@@ -98,13 +96,14 @@ class Board:
                 ret += child.__repr__(level + 1)
         return ret
 
-def test_children(boards, cur_piece):
+def test_children(boards, cur_piece, net):
     for brd in boards:
-        brd.rating = test_child(brd, cur_piece)
+        brd.rating = test_child(brd, cur_piece, net)
     boards.sort(key=lambda x: x.rating)
     return boards[int(len(boards)*.70):]
 
-def test_child(child, cur_piece):
+def test_child(child, cur_piece, net):
+    LAYER_1, LAYER_2, LAYER_3 = net[0], net[1], net[2]
     inputs = np.zeros((17, 1))
     index = 0
     pieces = list(child.players['one']) + list(child.players['two'])
