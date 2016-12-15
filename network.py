@@ -1,5 +1,7 @@
 #pylint: disable=E1101
 
+import itertools
+
 import numpy as np
 
 import game
@@ -34,9 +36,11 @@ def sigmoid(x):
 def normalize(x):
     return x / x.max(axis=0)
 
-#---------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------
 
 def crossover(parent_1, parent_2):
+    parent_1 = parent_1.weights
+    parent_2 = parent_2.weights
     if parent_1.shape != parent_2.shape:
         raise ValueError('Cannot cross matrices of different sizes.')
     shape = parent_1.shape
@@ -58,14 +62,15 @@ def random_network():
     layer_1 = Layer(weights1, bias1, sigmoid)
     layer_2 = Layer(weights2, bias2, sigmoid)
     layer_3 = Layer(weights3, bias3, sigmoid)
-    return (layer_1, layer_2, layer_3, 0)
+    return [layer_1, layer_2, layer_3, 0]
 
-def find_fitness(net):
-    results = game.comp_stomp(net)
-    fitness = 0
-    if results[0] == 1:
-        fitness = 1 - (results[1]/50)
-    return fitness
+def find_fitness(net1, net2):
+    results = game.comp_stomp(net1, net2)
+    fitness = results[0]# - results[1]/50
+    if fitness == 1:
+        return (1, -1)
+    if fitness == -1:
+        return (-1, 1)
 
 def acc_fitness(population):
     total = 0
@@ -89,22 +94,54 @@ def select_best(population):
 
 def breed(population):
     new_population = []
-    for net1, net2 in zip(population, population[:1]):
+    for net1, net2 in zip(population, population[::-1]):
         layer1 = crossover(net1[0], net2[0])
         layer2 = crossover(net1[1], net2[1])
         layer3 = crossover(net1[2], net2[2])
-        new_population.append((layer1, layer2, layer3, 0))
+        new_population.append([layer1, layer2, layer3, 0])
 
-        
+
 def train():
     population = []
-    for i in range(16):
+    for i in range(4):
         population.append(random_network())
     population = acc_fitness(population)
+    print(population)
     best, worst = select_best(population)
 
+def train1():
+    pop = []
+    psize = 4
+    for i in range(psize):
+        pop.append(random_network())
+    gens = 5
+    while gens > 0:
+        print("Generation ", gens)
+        for net1, net2 in itertools.combinations(pop, 2):
+            fit = find_fitness(net1, net2)
+            net1[3] += fit[0]
+            net2[3] += fit[1]
+        pop.sort(key=lambda x: x[3])
+        new = breed(pop)
+        for i in range(psize/2):
+            new.append(random_network())
+        gens -= 1
+        pop = new
+        pop.sort(key=lambda x: x[3])
+        best = pop[psize-1]
+        best = best[:3]
+        for l in best:
+            print(l)
+        save_network("test", best)
 
-#---------------------------------------------------------------------------------------------------
+
+def main():
+    net1 = random_network()
+    net2 = random_network()
+    results = game.comp_stomp(net1, net2)
+
+
+#-------------------------------------------------------------------------------------
 
 def save_network(fname, **matrices):
     np.savez(fname, **matrices)
@@ -117,55 +154,5 @@ def load_network(fname):
     return layer1, layer2, layer3
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    main()

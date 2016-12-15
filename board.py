@@ -16,10 +16,14 @@ class Board:
             self.players = {"one": deque(maxlen=4), "two": deque(maxlen=4)}
             self.score_one = 0
             self.score_two = 0
+            self.longest_run_1 = 0
+            self.longest_run_2 = 0
         else:
             self.players = deepcopy(players)
             self.score_one = score(self.players["one"])
             self.score_two = score(self.players["two"])
+            self.longest_run_1 = self.score_one
+            self.longest_run_2 = self.score_two
             if self.score_one == 4 or self.score_two == 4:
                 self.leaf = True
 
@@ -27,6 +31,8 @@ class Board:
         self.players[statue.player].append(statue)
         self.score_one = score(self.players["one"])
         self.score_two = score(self.players["two"])
+        self.longest_run_1 = self.score_one
+        self.longest_run_2 = self.score_two
         if self.score_one == 4 or self.score_two == 4:
             self.leaf = True
 
@@ -48,15 +54,15 @@ class Board:
         return self.children
 
     def focused_find_children(self, statue_num, depth, net):
-        possible_boards = self.find_children(statue_num, 1)
-        pruned = test_children(possible_boards, statue_num, net)
+        self.find_children(statue_num, 0)
+        pruned = test_children(self.children, statue_num, net)
         for child in pruned:
             if depth > 1 and not child.leaf:
-                child.focused_find_children(next_move(statue_num), depth - 1)
-                for next_child in child.children:
-                    child.score_one += next_child.score_one
-                    child.score_two += next_child.score_two
-        self.children = possible_boards
+                child.focused_find_children(next_move(statue_num), depth - 1, net)
+                for gchild in child.children:
+                    child.score_one += gchild.score_one
+                    child.score_two += gchild.score_two
+        self.children = pruned
         return self.children
 
     def __str__(self):
@@ -100,14 +106,17 @@ def test_children(boards, cur_piece, net):
     for brd in boards:
         brd.rating = test_child(brd, cur_piece, net)
     boards.sort(key=lambda x: x.rating)
-    return boards[int(len(boards)*.70):]
+    for brd in boards:
+        print(brd.rating)
+    print()
+    return boards[int(len(boards)*.50):]
 
 def test_child(child, cur_piece, net):
     LAYER_1, LAYER_2, LAYER_3 = net[0], net[1], net[2]
-    inputs = np.zeros((17, 1))
-    index = 0
     pieces = list(child.players['one']) + list(child.players['two'])
     pieces.sort(key=lambda x: x.num)
+    index = 0
+    inputs = np.zeros((17, 1))
     for piece in pieces:
         inputs[index] = piece.x
         inputs[index+1] = piece.y
