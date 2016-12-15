@@ -3,6 +3,9 @@ import random
 import piece
 import board
 
+import network
+import numpy
+
 def player_turn(turn, brd):
     print("Turn: ", turn, "\n")
     print(brd)
@@ -116,23 +119,21 @@ def comp_stomp(net_1, net_2):
     return game_over()
 
 def run_game():
-    player = "one"
-    comp = "two"
+    net = network.load_network("pop4_gen10.npz")
     turn = 0
+    turn_count = 0
     brd = board.Board()
-    while True:
+    while turn_count < 40:
         turn = board.next_move(turn)
+        turn_count += 1 
         if turn % 2 == 1:
             brd = player_turn(turn, brd)
         else:
-            brd = minimax_turn(2, turn, brd)
-        if brd.score_one == 4:
-            print("Player one wins! ")
-            sys.exit(1)
-        if brd.score_two == 4:
-            print("Player two wins! ")
-            sys.exit(1)
-
+            brd = player_two(turn, brd, net)
+        if brd.longest_run_1 == 4 or brd.longest_run_2 == 4:
+            print(game_over(brd))
+            return game_over(brd)
+    return game_over()
 
 if __name__ == "__main__":
     run_game()
