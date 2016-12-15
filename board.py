@@ -106,9 +106,9 @@ def test_children(boards, cur_piece, net):
     for brd in boards:
         brd.rating = test_child(brd, cur_piece, net)
     boards.sort(key=lambda x: x.rating)
-    for brd in boards:
-        print(brd.rating)
-    print()
+    # for brd in boards:
+    #     print(brd.rating)
+    # print()
     return boards[int(len(boards)*.50):]
 
 def test_child(child, cur_piece, net):

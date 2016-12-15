@@ -92,6 +92,7 @@ def select_best(population):
                 best.append(population.pop(i))
     return best, population
 
+
 def breed(population):
     new_population = []
     for net1, net2 in zip(population, population[::-1]):
@@ -101,45 +102,34 @@ def breed(population):
         new_population.append([layer1, layer2, layer3, 0])
 
 
-def train():
-    population = []
-    for i in range(4):
-        population.append(random_network())
-    population = acc_fitness(population)
-    print(population)
-    best, worst = select_best(population)
-
-def train1():
+def gen_pop(size):
     pop = []
-    psize = 4
-    for i in range(psize):
+    for i in range(size):
         pop.append(random_network())
-    gens = 5
-    while gens > 0:
-        print("Generation ", gens)
-        for net1, net2 in itertools.combinations(pop, 2):
-            fit = find_fitness(net1, net2)
-            net1[3] += fit[0]
-            net2[3] += fit[1]
-        pop.sort(key=lambda x: x[3])
-        new = breed(pop)
-        for i in range(psize/2):
-            new.append(random_network())
-        gens -= 1
-        pop = new
-        pop.sort(key=lambda x: x[3])
-        best = pop[psize-1]
-        best = best[:3]
-        for l in best:
-            print(l)
-        save_network("test", best)
-
-
+    return pop
+    
+def rate_and_sort(pop):
+    for net1, net2 in itertools.combinations(pop, 2):
+        results = game.comp_stomp(net1, net2)
+        net1[3] += results["one"]
+        net2[3] += results["two"]
+    pop.sort(key=lambda x: x[3])
+    return pop
+        
 def main():
-    net1 = random_network()
-    net2 = random_network()
-    results = game.comp_stomp(net1, net2)
-
+    POPSIZE = 4
+    GENERATIONS = 10
+    
+    pop = gen_pop(POPSIZE)
+    gen = 1
+    while(gen < GENERATIONS):
+        pop = rate_and_sort(pop)
+        for x in pop:
+            print(x[3])
+        gen += 1
+        pop = gen_pop(POPSIZE)
+        
+    
 
 #-------------------------------------------------------------------------------------
 

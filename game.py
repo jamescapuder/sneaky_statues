@@ -45,8 +45,8 @@ def minimax_turn(player, turn, brd):
 
 def player_one(turn, brd, net):
     brd.focused_find_children(turn , 3, net)
-    best_score = float("-inf")
-    best_board = None
+    best_score = brd.children[0].score_one - brd.children[0].score_two
+    best_board = brd.children[0]
     same = 0
     for child in brd.children:
         if child.longest_run_1 == 4:
@@ -67,8 +67,8 @@ def player_one(turn, brd, net):
 
 def player_two(turn, brd, net):
     brd.focused_find_children(turn , 3, net)
-    best_score = float("-inf")
-    best_board = None
+    best_score = brd.children[0].score_two - brd.children[0].score_one
+    best_board = brd.children[0]
     same = 0
     for child in brd.children:
         if child.longest_run_2 == 4:
@@ -84,7 +84,7 @@ def player_two(turn, brd, net):
                 best_score = child.score_two - child.score_one
                 best_board = child
     if same == len(brd.children) - 1:
-        return random.choice(brd.children) 
+        return random.choice(brd.children)
     return best_board
 
 def game_over(brd=None):
@@ -104,7 +104,6 @@ def comp_stomp(net_1, net_2):
     turn = 0 #1-8
     turn_count = 0
     while turn_count < 40:
-        print(brd)
         turn = board.next_move(turn)
         turn_count += 1
         if turn % 2 == 1:
@@ -112,7 +111,6 @@ def comp_stomp(net_1, net_2):
         else:
             brd = player_two(turn, brd, net_2)
         if brd.longest_run_1 == 4 or brd.longest_run_2 == 4:
-            print(brd)
             print(game_over(brd))
             return game_over(brd)
     return game_over()
