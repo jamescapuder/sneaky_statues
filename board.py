@@ -5,7 +5,6 @@ import numpy as np
 import piece
 import network
 
-
 class Board:
 
     def __init__(self, players=None):
@@ -102,15 +101,15 @@ class Board:
                 ret += child.__repr__(level + 1)
         return ret
 
+
 def test_children(boards, cur_piece, net):
     for brd in boards:
         brd.rating = test_child(brd, cur_piece, net)
     boards.sort(key=lambda x: x.rating)
-    # for brd in boards:
-    #     print(brd.rating)
-    # print()
-    return boards[int(len(boards)*.50):]
+    return boards[int(len(boards)*.30):]
 
+
+# run the board thru the net
 def test_child(child, cur_piece, net):
     LAYER_1, LAYER_2, LAYER_3 = net[0], net[1], net[2]
     pieces = list(child.players['one']) + list(child.players['two'])
@@ -123,15 +122,17 @@ def test_child(child, cur_piece, net):
         index += 2
     inputs[16] = cur_piece
     inputs = network.normalize(inputs)
-    inputs[16] = (inputs[16] * 6) / 8
+    inputs[16] = (inputs[16] * 6) / 8 # the current piece is the only input not from 0-6 so we re-normalize it for 1-8
     out = LAYER_3.feed(LAYER_2.feed(LAYER_1.feed(inputs)))
     return out[0]
+
 
 def next_move(current):
     n_move = (current + 1) % 8
     if n_move == 0:
         n_move = 8
     return n_move
+
 
 def is_valid_move(xycord, players):
     if xycord > (6, 6):
@@ -143,17 +144,8 @@ def is_valid_move(xycord, players):
             return False
     return True
 
-def max_run(pieces):
-    count, max_r = 1, 1
-    for i in range(len(pieces)-1):
-        if pieces[i] + 1 == pieces[i+1]:
-            count += 1
-            if count > max_r:
-                max_r = count
-        else:
-            count = 1
-    return max_r
 
+# checks how many pieces player has in a row
 def score(player):
     player_x = sorted(player, key=lambda statue: statue.xy)
     player_y = sorted(player, key=lambda statue: statue.xy[::-1])
@@ -184,14 +176,3 @@ def score(player):
     max_score.append(count)
 
     return max(max_score)
-
-
-
-
-
-
-
-
-
-
-

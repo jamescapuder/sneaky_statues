@@ -45,7 +45,8 @@ def random_network():
     layer_1 = Layer(weights1, bias1, sigmoid)
     layer_2 = Layer(weights2, bias2, sigmoid)
     layer_3 = Layer(weights3, bias3, sigmoid)
-    return [layer_1, layer_2, layer_3, 0]
+    return [layer_1, layer_2, layer_3, 0] # each network is three layers and its fitness
+
 
 def breed(population):
     new_population = []
@@ -55,6 +56,8 @@ def breed(population):
         layer3 = crossover(net1[2], net2[2])
         new_population.append([layer1, layer2, layer3, 0])
 
+
+# flatten weight matrices and crossover
 def crossover(parent_1, parent_2):
     weights_1 = parent_1.weights
     weights_2 = parent_2.weights
@@ -71,36 +74,66 @@ def crossover(parent_1, parent_2):
     parent_2.weights = new_2
     return parent_1, parent_2
 
-        
+
 def gen_pop(size):
     pop = []
     for i in range(size):
         pop.append(random_network())
     return pop
-    
+
+
 def rate_and_sort(pop):
-    for net1, net2 in itertools.combinations(pop, 2):
-        results = game.comp_stomp(net1, net2)
-        net1[3] += results["one"]
-        net2[3] += results["two"]
+    total = 0 
+    for net in pop:
+        results = game.max_v_net(net)
+        net[3] += results["two"]
+        total += results["two"]
+    print("Pop total:", total)
     pop.sort(key=lambda x: x[3])
     return pop
+
 
 def select(pop):
     return pop[int(len(pop)/2):]
 
+
 def cross(selected):
-    index = 0
-    for layer1, layer2 in zip(selected[0][:3], selected[1][:3]):
-        newlayer1, newlayer2 = crossover(layer1, layer2)
-        selected[0][index] = newlayer1
-        selected[1][index] = newlayer2
-        index += 1
-    return selected 
+    children = []
+    pool1 = selected[:int(len(selected)/2)]
+    pool2 = selected[int(len(selected)/2):]
+    for net1, net2 in zip(pool1, pool2):
+        child1 = []
+        child2 = []
+        for layer1, layer2 in zip(net1, net2):
+            if type(layer1) == int or type(layer2) == int:
+                break
+            newlayer1, newlayer2 = crossover(layer1, layer2)
+            child1.append(newlayer1)
+            child2.append(newlayer2)
+        child1.append(0)
+        child2.append(0)
+        children.extend([child1, child2])
+    return children
+
+def final_battle(pop):
+    for net in pop:
+        net[3] = 0
+    for net1, net2 in itertools.combinations(pop, 2):
+        if np.random.uniform() > .5:
+            results = game.comp_stomp(net1, net2)
+            net1[3] += results["one"]
+            net2[3] += results["two"]
+        else:
+            results = game.comp_stomp(net2, net1)
+            net1[3] += results["two"]
+            net2[3] += results["one"]
+    pop.sort(key=lambda x: x[3])
+    return pop[-1]
+
 
 def main():
-    POPSIZE = 4
-    GENERATIONS = 16
+    POPSIZE = 10
+    GENERATIONS = 50
     pop = gen_pop(POPSIZE)
     gen = 1
     while(gen < GENERATIONS):
@@ -113,15 +146,17 @@ def main():
         pop = next_pop
         gen += 1
     print("Final Generation")
-    pop = rate_and_sort(pop)
-    best = pop[-1]
+    best = final_battle(pop)
     best = best[:3]
-    np.savez("pop"+str(POPSIZE)+"_gen"+str(GENERATIONS), weights1=best[0].weights, weights2=best[1].weights, weights3=best[2].weights, bias1=best[0].bias, bias2=best[1].bias, bias3=best[2].bias)
+    np.savez("pop"+str(POPSIZE)+"_gen"+str(GENERATIONS), weights1=best[0].weights,
+             weights2=best[1].weights, weights3=best[2].weights, bias1=best[0].bias,
+             bias2=best[1].bias, bias3=best[2].bias)
 
 #-------------------------------------------------------------------------------------
 
 def save_network(fname, **matrices):
     np.savez(fname, **matrices)
+
 
 def load_network(fname):
     data = np.load(fname)
